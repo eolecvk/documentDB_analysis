@@ -4,13 +4,12 @@ sudo apt-get update
 sudo apt-get install -y mongodb-org
 
 #fix for MongoDB dbpath (\data\db\) does not exist after service mongod start
-
-#sudo killall -15 mongod
-#sudo mkdir -p /data/db/
+sudo killall -15 mongod
+sudo mkdir -p /data/db/
 
 #/!\ replace nom_utilisateur /!\
-#sudo chown -R nom_utilisateur:nom_utilisateur /data/db
-#sudo mongod
+sudo chown -R nom_utilisateur:nom_utilisateur /data/db
+sudo mongod
 
 #src : https://doc.ubuntu-fr.org/mongodb 
-#tested on ubuntu 17.0
+#tested on ubuntu 17.10
