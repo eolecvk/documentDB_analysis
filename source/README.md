@@ -18,11 +18,11 @@ Using the Twitter REST API requires one accomplish the following steps:
 
 **2. to [register a new app](https://apps.twitter.com/) on the developer**
 
-![](/img/1_app_registration.png)
+![](https://github.com/eolecvk/documentDB_analysis/blob/master/source/img/1_app_registration.png)
 
 **3. to generate a consumer/secret key pair for the app**
 
-![](/img/2_app_keys.png)
+![](https://github.com/eolecvk/documentDB_analysis/blob/master/source/img/2_app_keys.png)
 
 ## [Twython](https://pypi.python.org/pypi/twython/), A Pure Python Twitter API wrapper
 
