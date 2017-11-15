@@ -5,6 +5,8 @@ import datetime
 #from os.path import join
 #import simplejson as json
 
+from functools import partial
+
 from urllib.error import URLError
 from http.client import BadStatusLine
 from twython import Twython, TwythonError
@@ -102,7 +104,7 @@ def search(q=None,
     for details on API parameters
     """
 
-    search_results = []
+    tweets = []
 
     twitter_api = conn.get_twitter_api()
     search_tweets = partial(
@@ -112,18 +114,23 @@ def search(q=None,
     cursor = max_id
     while cursor != 0:
         response = search_tweets(q=q,
-            since_id=since_id, max_id=max_id, count=100)
+            since_id=since_id, max_id=cursor, count=100)
         if response is None or response==[]:
+            print("break_1")
             break
         else:
-            cursor = min([t['id'] for t in response])
-            new_tweets = [t for t in response if t not in search_results]
+            try:
+                cursor = min([t['id'] for t in response['statuses']])
+            except:
+                print(list(response.keys()))
+            new_tweets = [t for t in response['statuses'] if t not in tweets]
             if new_tweets:
-                search_results.extend(new_tweets)
+                tweets.extend(new_tweets)
                 print("max_id = {cursor}".format(cursor=cursor))
             else:
+                print("break_2")
                 break
-    return search_results
+    return tweets
 
 
 #===============================
@@ -135,9 +142,11 @@ if __name__ == "__main__":
     twitter_api = conn.get_twitter_api()
 
     try:
-        search_results = twitter_api.search(q='database', count=100)
+        tweets = search(q='database')
     except TwythonError as e:
         print(e)
 
-    for tweet in search_results['statuses']:
-        print(tweet['text'])
+    #for tweet in tweets:
+    #    print(tweet['text'])
+
+    print(len(tweets))
