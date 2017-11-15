@@ -10,6 +10,19 @@ The endpoints:
 + `GET search/tweets` is used for fetching tweets based on keywords
 + `GET statuses / home_timeline` is used for sourcing tweets for a given user of interest.
 
+## Requirements
+
+Using the Twitter REST API requires one accomplish the following steps:
+
+**1. to sign-up as a Twitter user (or use an existing account)**
+
+**2. to [register a new app](https://apps.twitter.com/) on the developer**
+
+![](/img/1_app_registration.png)
+
+**3. to generate a consumer/secret key pair for the app**
+
+![](/img/2_app_keys.png)
 
 ## [Twython](https://pypi.python.org/pypi/twython/), A Pure Python Twitter API wrapper
 
@@ -36,10 +49,10 @@ twitter = Twython(APP_KEY, APP_SECRET,
 **/GET Search Request**
 
 ```
-tweets = twitter.search(q='dauphine university')
+tweets = twitter.search(q='nosql')
 ```
 
-We later proceed to saving the fetched data in database system.
+We later proceed to saving the fetched data in our database system.
 
 
 
