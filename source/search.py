@@ -14,6 +14,18 @@ import conn
 
 #===============================
 
+def local_save(tweet, save_dir):
+    import simplejson as json
+    from os.path import join
+
+    fname = "{}.json".format(tweet['id_str'])
+    fpath = join(save_dir, fname)
+    with open(fpath, 'w') as fp:
+        json.dump(tweet, fp)
+
+
+#===============================
+
 def make_twitter_request(twitter_api_func, max_errors=10, *args, **kw):
     """
     A nested helper function that handles common HTTPErrors.
@@ -91,7 +103,10 @@ def make_twitter_request(twitter_api_func, max_errors=10, *args, **kw):
 #===============================
 
 def search(q=None,
-    since_id=None, max_id=None, tweet_limit=sys.maxsize):
+    since_id=None,
+    max_id=None,
+    tweet_limit=sys.maxsize,
+    save_dir=None):
     """
     For a given query q, get recent tweets (up to 7 days old)
     Keyword args:
@@ -116,19 +131,22 @@ def search(q=None,
         response = search_tweets(q=q,
             since_id=since_id, max_id=cursor, count=100)
         if response is None or response==[]:
-            print("break_1")
             break
         else:
             try:
                 cursor = min([t['id'] for t in response['statuses']])
             except:
+                print("'response' does not contain a 'statuses' key:")
                 print(list(response.keys()))
             new_tweets = [t for t in response['statuses'] if t not in tweets]
             if new_tweets:
                 tweets.extend(new_tweets)
                 print("max_id = {cursor}".format(cursor=cursor))
+
+                if save_dir is not None:
+                    for tweet in new_tweets:
+                        local_save(tweet, save_dir)
             else:
-                print("break_2")
                 break
     return tweets
 
@@ -142,11 +160,8 @@ if __name__ == "__main__":
     twitter_api = conn.get_twitter_api()
 
     try:
-        tweets = search(q='database')
+        tweets = search(q='database', save_dir="/home/eolus/Desktop/DAUPHINE/DBA/dm_data")
     except TwythonError as e:
         print(e)
 
-    #for tweet in tweets:
-    #    print(tweet['text'])
-
-    print(len(tweets))
+    
