@@ -1,30 +1,19 @@
+"""
+First, search for recent tweets based on a query (eg: ="database"),
+Then, save tweets as .json
+"""
+
 import sys
 import time
 import datetime
 
-#from os.path import join
-#import simplejson as json
-
 from functools import partial
-
 from urllib.error import URLError
 from http.client import BadStatusLine
 from twython import Twython, TwythonError
 import conn
+from utils.json_utils import save_json
 
-#===============================
-
-def local_save(tweet, save_dir):
-    import simplejson as json
-    from os.path import join
-
-    fname = "{}.json".format(tweet['id_str'])
-    fpath = join(save_dir, fname)
-    with open(fpath, 'w') as fp:
-        json.dump(tweet, fp)
-
-
-#===============================
 
 def make_twitter_request(twitter_api_func, max_errors=10, *args, **kw):
     """
@@ -100,8 +89,6 @@ def make_twitter_request(twitter_api_func, max_errors=10, *args, **kw):
                 raise
 
 
-#===============================
-
 def search(q=None,
     since_id=None,
     max_id=None,
@@ -145,13 +132,10 @@ def search(q=None,
 
                 if save_dir is not None:
                     for tweet in new_tweets:
-                        local_save(tweet, save_dir)
+                        save_json(tweet, save_dir)
             else:
                 break
     return tweets
-
-
-#===============================
 
 
 if __name__ == "__main__":
@@ -163,5 +147,3 @@ if __name__ == "__main__":
         tweets = search(q='database', save_dir="/home/eolus/Desktop/DAUPHINE/DBA/dm_data")
     except TwythonError as e:
         print(e)
-
-    
