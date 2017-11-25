@@ -2,11 +2,27 @@
 Mongodb connection handler
 """
 import pymongo
+_mongoclient = None
 _mongodb = None
+_collection = None
 
-def get_db(db="tweet_database", host="localhost", port=27017):
+
+def get_client(host="localhost", port=27017):
+	global _mongoclient
+	if _mongoclient is None:
+		_mongoclient = pymongo.MongoClient(host, port)
+	return _mongoclient
+
+def get_db(db_name="twitter_data", client=_mongoclient):
 	global _mongodb
 	if _mongodb is None:
-		client = pymongo.MongoClient(host, port)
-		_mongodb = client['db']
+		client = get_client()
+		_mongodb = client[db_name]
 	return _mongodb
+
+def get_collection():
+    global _collection
+    if _collection is None:
+    	mongodb = get_db()
+    	_collection = pymongo.collection.Collection(mongodb, "tweets")
+    return _collection
