@@ -1,17 +1,15 @@
 
-import couchdb
+_adress_server = 'http://localhost:5984/'
+_address_db = 'http://localhost:5984/twitter_data'
 
-_server = None
-_db = None
+def get_address_server():
+    global _adress_server
+    if _adress_server is None:
+        _adress_server = 'http://localhost:5984/'
+    return _adress_server
 
-def get_server(url='http://localhost:5984/'):
-	global _server
-	if _server server is None:
-	    _server = couchdb.Server(url)
-	return _server
-
-def get_db(db_name="twitter_data"):
-	global _db
-	if _db is None:
-		_db = server.create(db_name)
-	return _db
+def get_address_db():
+    global _address_db
+    if _address_db is None:
+        _address_db = 'http://localhost:5984/twitter_data'
+    return _address_db

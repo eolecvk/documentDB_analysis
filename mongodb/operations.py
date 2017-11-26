@@ -37,13 +37,13 @@ def create(tweet):
     collection = get_collection()
     mongodb.insert_one(preprocessed_tweet)
 
-def create_batch(tweets):
+def create_bulk(tweets):
     collection = get_collection()
     collection.insert_many(tweets, ordered=False)
 
 
 # --retrieve
-def retrieve_batch(**kwargs):
+def retrieve_bulk(**kwargs):
     collection = get_collection()
     records = [r for r in collection.find(**kwargs)]
     return records
@@ -54,7 +54,7 @@ def update(**kwargs):
     collection = get_collection()
     collection.update_one(**kwargs)
 
-def update_batch(**kwargs):
+def update_bulk(**kwargs):
     collection = get_collection()
     collection.update_many(**kwargs)
 
@@ -64,7 +64,7 @@ def delete(**kwargs):
     collection = get_collection()
     collection.delete_one(**kwargs)
 
-def delete_batch(**kwargs):
+def delete_bulk(**kwargs):
     collection = get_collection()
     collection.delete_many(**kwargs)
 
