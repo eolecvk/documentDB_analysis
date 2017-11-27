@@ -15,12 +15,14 @@ def crud_runtime(dataset, test_size, db="mongodb"):
         return
 
     elif db == "mongodb":
-        from mongodb.operations import delete_all_db
-        from mongodb.operations import create_bulk   # C
-        from mongodb.operations import retrieve_bulk # R
-        from mongodb.operations import update_bulk   # U
-        from mongodb.operations import delete_bulk   # D
+        from mymongodb.operations import create_db
+        from mymongodb.operations import delete_all_db
+        from mymongodb.operations import create_bulk   # C
+        from mymongodb.operations import retrieve_bulk # R
+        from mymongodb.operations import update_bulk   # U
+        from mymongodb.operations import delete_bulk   # D
 
+        # config operations
         kw_create   = { 'tweets' : dataset[:test_size] }
         kw_retrieve = { 'filter' : { 'lang' : 'fr' } }
         kw_update   = { 'filter' : { 'lang' : 'en' },
@@ -29,39 +31,48 @@ def crud_runtime(dataset, test_size, db="mongodb"):
         kw_delete   = { 'filter' : { 'lang' : 'fr' } }
 
     elif db == "couchdb":
-        from couchdb.operations import delete_all_db
-        from couchdb.operations import create_bulk   # C
-        from couchdb.operations import retrieve_bulk # R
-        from couchdb.operations import update_bulk   # U
-        from couchdb.operations import delete_bulk   # D
+        from mycouchdb.operations import create_db
+        from mycouchdb.operations import delete_all_db
+        from mycouchdb.operations import create_bulk   # C
+        from mycouchdb.operations import retrieve_bulk # R
+        from mycouchdb.operations import update_bulk   # U
+        from mycouchdb.operations import delete_bulk   # D
 
+        # config operations
         kw_create   = { 'docs' : dataset[:test_size] }
-        kw_retrieve = { 'mapfun': """function(doc) {
-                                if (doc.lang == "fr") {
-                                    emit(doc._id, doc);
-                                    }
-                                }""" }
-        #USE MAPFUN STR
-        # cf https://stackoverflow.com/questions/10404178/how-can-i-delete-multiple-documents-in-couchdb#10404256
-        # cf https://wiki.apache.org/couchdb/Introduction_to_CouchDB_views
 
-        kw_update   = { 'filter' : { 'lang' : 'en' },
-                        'update' : {
-                        '$set' : { 'lang' : 'eng' } } }
-        kw_delete   = { 'filter' : { 'lang' : 'fr' } }
+        kw_retrieve = {
+            'mapfun': "function(doc) {{ if (doc.retweet_count > 10) {{ emit(doc._id, doc); }} }}"
+            }
+
+        kw_update   = {
+            'mapfun': "function(doc) {{ if (doc.retweet_count > 10) {{ emit(doc._id, doc); }} }}",
+            'update' : { 'popularity' : 'high'}
+            }
+
+        kw_delete   = {
+            'mapfun': "function(doc) {{ if (doc.retweet_count < 10) {{ emit(doc._id, doc); }} }}"
+            }
 
     logs = { test_size : {} }
     delete_all_db()
+    create_db()
     for f, f_name, kw in [
         (create_bulk, 'create', kw_create),
         (retrieve_bulk, 'retrieve', kw_retrieve),
         (update_bulk, 'update', kw_update),
         (delete_bulk, 'delete', kw_delete)
         ] :
-        rt = timer(f, **kw)
-        logs[test_size][f_name] = rt
 
+        print("timing: {}".format(f_name))
+        rt, r = timer(f, **kw)
+        logs[test_size][f_name] = rt
+        print(rt)
+        #print(r)
+
+    #pprint_dict(logs)
     return logs
+
 
 def mongodb_tests(dataset,
     test_sizes=[1, 100, 1000, 10000, 90000]):
@@ -106,25 +117,24 @@ if __name__ == "__main__":
 
     # input data
     dataset_dir = "/home/eolus/Desktop/DAUPHINE/DBA/dm_data"
-    tweets = load_dataset(dataset_dir)
+    tweets = load_dataset(dataset_dir, n=2000)
 
-    logs_foo =  crud_runtime(tweets, 1000, "couchdb")
+    logs_foo =  crud_runtime(tweets, 2000, "couchdb")
     pprint_dict(logs_foo)
-    
 
 
-    # # log
-    # logs = {
-    #     'mongodb' : {
-    #         'create'  : {},
-    #         'retrieve': {},
-    #         'update'  : {},
-    #         'delete'  : {}
-    #         },
-    #     'couchdb' : {
-    #         'create'  : {},
-    #         'retrieve': {},
-    #         'update'  : {},
-    #         'delete'  : {}
-    #         }
-    #     }
+    # from mycouchdb.operations import create_db
+    # from mycouchdb.operations import delete_all_db
+    # delete_all_db()
+    # create_db()
+
+    # from mycouchdb.operations import create_bulk   # C
+    # r = create_bulk(docs=tweets)
+
+    # from mycouchdb.operations import retrieve_bulk
+    # mapfun = "function(doc) {{ if (doc.retweet_count > 10) {{ emit(doc._id, doc); }} }}"
+    # r = retrieve_bulk(mapfun=mapfun)
+    # print(len(r))
+
+
+

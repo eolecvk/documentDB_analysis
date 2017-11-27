@@ -2,6 +2,7 @@
 Wrappers for common operations (CRUD) on mongoDB
 """
 import pymongo
+from mongodb.conn import get_client
 from mongodb.conn import get_db
 from mongodb.conn import get_collection
 
@@ -23,12 +24,15 @@ def preprocess_tweets(tweets):
 
 
 def delete_all_db():
-    from mongodb.conn import get_client
+    
     client = get_client()
     for db_name in client.database_names():
         client.drop_database(db_name)
         print("DROPPED DB: {}".format(db_name))
 
+def create_db():
+    r = get_db()
+    return r.json()
 
 
 # CRUD

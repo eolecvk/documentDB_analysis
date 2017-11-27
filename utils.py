@@ -28,7 +28,7 @@ def json_load(fpath):
     return tweet
 
 
-def load_dataset(dataset_dir):
+def load_dataset(dataset_dir, n=None):
     """
     Read tweets from .json files in a given dir
     returns tweet dataset as list of dicts
@@ -36,6 +36,7 @@ def load_dataset(dataset_dir):
     fnames = os.listdir(dataset_dir)
     fpaths = [ os.path.join(dataset_dir, fname)
                for fname in fnames ]
+    if n is not None: fpaths = fpaths[:n]
     tweets = [ json_load(fpath) for fpath in fpaths ]
     return tweets
 
@@ -46,7 +47,7 @@ def pprint_dict(in_dict):
 
 def timer(f, **kwargs):
     start = default_timer()   # Start timer
-    f(**kwargs)
+    r = f(**kwargs)
     end = default_timer()     # End timer
     time_delta = end - start  # Get runtime
-    return time_delta
+    return time_delta, r
