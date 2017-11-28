@@ -2,9 +2,9 @@
 Wrappers for common operations (CRUD) on mongoDB
 """
 import pymongo
-from mongodb.conn import get_client
-from mongodb.conn import get_db
-from mongodb.conn import get_collection
+from mymongodb.conn import get_client
+from mymongodb.conn import get_db
+from mymongodb.conn import get_collection
 
 
 # Basic Utils
@@ -32,7 +32,7 @@ def delete_all_db():
 
 def create_db():
     r = get_db()
-    return r.json()
+    return r
 
 
 # CRUD
