@@ -8,7 +8,7 @@ sudo killall -15 mongod
 sudo mkdir -p /data/db/
 
 #/!\ replace nom_utilisateur /!\
-sudo chown -R nom_utilisateur:nom_utilisateur /data/db
+sudo chown -R `whoiam`:`whoiam` /data/db
 sudo mongod
 
 #src : https://doc.ubuntu-fr.org/mongodb 
