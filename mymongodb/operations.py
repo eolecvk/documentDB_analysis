@@ -50,6 +50,7 @@ def create_bulk(tweets):
 def retrieve_bulk(**kwargs):
     collection = get_collection()
     records = [r for r in collection.find(**kwargs)]
+    print("nb matches:", len(records))
     return records
 
 
