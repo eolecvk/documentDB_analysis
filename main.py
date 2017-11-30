@@ -36,8 +36,10 @@ def crud_runtime(dataset, db):
             (retrieve_bulk, 'retrieve', kw_retrieve),
             (update_bulk, 'update', kw_update),
             (delete_bulk, 'delete', kw_delete) ]:
+            
             rt, r = timer(f, **kw)
             logs[f_name] = rt
+            print(f_name, '\t', rt)
 
 
 
@@ -87,7 +89,7 @@ def crud_runtime(dataset, db):
 
             rt, r = timer(f, **kw)
             logs[f_name] = rt
-            print(f_name, rt)
+            print(f_name, '\t', rt)
 
     return logs
 
@@ -140,7 +142,9 @@ if __name__ == "__main__":
     tweets = load_dataset(dataset_dir)
     
     #Get logs
-    logs = generate_logs(dataset=tweets, sample_sizes=[2000], trials=5)
+    logs = generate_logs(dataset=tweets,
+        sample_sizes=[10000, 20000, 50000, 70000, 90000],
+        trials=10)
     pprint_dict(logs)
 
 
