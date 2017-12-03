@@ -29,7 +29,7 @@ def crud_runtime(dataset, db):
         kw_retrieve   = {'filter' : {'retweet_count' : {'$gt' : 10}}}
         kw_update     = {'filter' : {'retweet_count' : {'$gt' : 10}},
                          'update' : {'$set' : { 'popularity' : 'high'}}}
-        kw_delete     = {'filter' : {'retweet_count' : {'$lt' : 10}}}
+        kw_delete     = {'filter' : {'retweet_count' : {'$gt' : 10}}}
 
         for f, f_name, kw in [
             (create_bulk, 'create', kw_create),
@@ -49,6 +49,7 @@ def crud_runtime(dataset, db):
         from mycouchdb.operations import create_bulk   # C
         from mycouchdb.operations import create_view   # R (overhead)        
         from mycouchdb.operations import query         # R
+        from mycouchdb.operations import create_view_retrieve
         from mycouchdb.operations import update_bulk   # U
         from mycouchdb.operations import delete_bulk   # D
 
@@ -67,22 +68,23 @@ def crud_runtime(dataset, db):
             {
                 'popular': {
                     "map" : "function(doc) {{ if (doc.retweet_count >= 10) emit(null, doc) }}"
-                },
-                'not_popular': {
-                    "map" : "function(doc) {{ if (doc.retweet_count < 10) emit(null, doc) }}"
                 }
             }
         }
         kw_create_view = { 'view_json' : view_json}
         kw_retrieve = {'view_name' : 'popular'}
+        kw_create_view_retrieve = {
+            'view_json' : view_json,
+            'view_name' : 'popular'
+            }
         kw_update = {'view_name' : 'popular',
                      'update' : {'popularity' : 'high'}}
-        kw_delete = {'view_name' : 'not_popular'}
+        kw_delete = {'view_name' : 'popular'}
 
 
         for f, f_name, kw in [
             (create_bulk, 'create', kw_create),
-            (create_view, 'create_view', kw_create_view),
+            (create_view_retrieve, 'create_view_retrieve', kw_create_view_retrieve),
             (query, 'query', kw_retrieve),
             (update_bulk, 'update', kw_update),
             (delete_bulk, 'delete', kw_delete) ]:
@@ -95,12 +97,12 @@ def crud_runtime(dataset, db):
 
 
 
-def generate_logs(dataset, sample_sizes, trials=10):
+def generate_logs(dataset, sample_sizes, trials=4):
 
     logs_all = { "mongodb" : {}, "couchdb": {} }
 
     
-    for db in ["mongodb", "couchdb"]:
+    for db in ["couchdb"]:
         for size in sample_sizes:
             for i in range(trials):
 
@@ -144,7 +146,7 @@ if __name__ == "__main__":
     #Get logs
     logs = generate_logs(dataset=tweets,
         sample_sizes=[10000, 20000, 50000, 70000, 90000],
-        trials=10)
+        trials=4)
     pprint_dict(logs)
 
 

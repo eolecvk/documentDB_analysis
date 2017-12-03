@@ -62,7 +62,7 @@ def create_bulk(docs):
     address_db = get_address_db()
     address_docs = '/'.join([address_db, '_bulk_docs'])
     r = requests.post(address_docs, json={'docs' : docs})
-    print("nb records created:", len(r.json()))
+    #print("nb records created:", len(r.json()))
     return r.json()
 
 
@@ -81,7 +81,7 @@ def create_view(view_json):
     address_db = get_address_db()
     url = '/'.join([address_db,"_design/tweets"])
     r = requests.put(url, json=view_json)
-    print(r.json())
+    #print(r.json())
     return r.json()
 
 
@@ -106,13 +106,17 @@ def update_view(view_json):
     r = create_view(view_json)
     return r
 
-
 def query(view_name):
     address_db = get_address_db()
     url="{}/_design/tweets/_view/{}".format(address_db, view_name)
     r = requests.get(url)
     records = r.json()['rows']
-    print("nb matches: {}".format(len(records)))
+    #print("nb matches: {}".format(len(records)))
+    return records
+
+def create_view_retrieve(view_json, view_name):
+    create_view(view_json)
+    records = query(view_name)
     return records
 
 
@@ -128,7 +132,7 @@ def query_temp_view(mapfun):
     r = requests.post(address_temp_view,
         json={'map' : mapfun},
         headers=headers)
-    print("nb records found:", r.json()['total_rows'])  
+    #print("nb records found:", r.json()['total_rows'])  
     return r.json()
 
 
@@ -183,7 +187,7 @@ def delete(key):
     return r.json()
 
 
-def delete_bulk(view_name="not_popular"):
+def delete_bulk(view_name="popular"):
     """
     CF
     https://web.archive.org/web/20111030013313/...
