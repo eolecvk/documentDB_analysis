@@ -140,7 +140,14 @@ if __name__ == "__main__":
 
 
     # input data
-    dataset_dir = "/home/eolus/Desktop/DAUPHINE/DBA/dm_data"
+    import sys
+    assert len(sys.argv)==2,"""
+Command not properly formatted; correct format:
+```
+python3 main.py {dataset_directory}
+```
+"""
+    dataset_dir = argv[1]
     tweets = load_dataset(dataset_dir)
     
     #Get logs
@@ -148,25 +155,3 @@ if __name__ == "__main__":
         sample_sizes=[10000, 20000, 50000, 70000, 90000],
         trials=4)
     pprint_dict(logs)
-
-
-
-
-    #print(update_design(view_json))
-
-    #print(pprint_dict(retrieve_all_designs()))
-
-
-
-    # kw_retrieve = {
-    #     'mapfun': "function(doc) {{ if (doc.retweet_count > 10) {{ emit(doc._id, doc); }} }}"
-    #     }
-
-    # kw_update   = {
-    #     'mapfun': "function(doc) {{ if (doc.retweet_count > 10) {{ emit(doc._id, doc); }} }}",
-    #     'update' : { 'popularity' : 'high'}
-    #     }
-
-    # kw_delete   = {
-    #     'mapfun': "function(doc) {{ if (doc.retweet_count < 10) {{ emit(doc._id, doc); }} }}"
-    #     }

@@ -139,11 +139,22 @@ def search(q=None,
 
 
 if __name__ == "__main__":
+    
+    import sys
+    assert len(sys.argv) == 3,"""
+Call not properly formatted;
+Correct format:
+'''
+python3 search.py {search_term} {save_dir}
+'''
+"""
+    search_term = sys.argv[1]
+    save_dir = sys.argv[2]
 
     import conn
     twitter_api = conn.get_twitter_api()
 
     try:
-        tweets = search(q='database', save_dir="/home/eolus/Desktop/DAUPHINE/DBA/dm_data")
+        tweets = search(q=search_term, save_dir=save_dir)
     except TwythonError as e:
         print(e)

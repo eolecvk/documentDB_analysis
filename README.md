@@ -1,206 +1,129 @@
-# Advanced Database Project
+# README
 
-**Date:** Oct 2017  
-**Authors**: Emerick LECOMTE, Eole CERVENKA, 
+## Environnement
 
-**Abstract:**  
-_In the context of building a topic discovery application using Twitter data (tweets), we are interested in comparing two candidate NoSQL document databases, MongoDB and CouchDB._
+_presuppose Ubuntu 17.10 -- la preparation des bases de donnees change pour d'autres environements_
 
+Clone / download le repertoire
+```
+git clone ~/projet_BDA https://github.com/eolecvk/documentDB_analysis.git
+```
 
-**Objectives**:  
+Installer les dépendance listée dans `requirements.txt`:
+```
+pip install -r ~/projet_BDA/requirements.txt
+```
 
-+ We will first define the  application, the data, the sourcing process and the database functionalities needed for our use case.
-+ We will then provide a qualitative review of the two candidate open-source databases MongoDB and CouchDB.
-+ We will finally perform a quantitative performance comparison of the two databases.  
-+ Given our operational needs, the qualitative and the quantitative comparisons will support our final decision to select the database that best fits our use case.
+## Collecte des donnees
 
-
-## Plan
-
-**1. Execution**
-
-+ Application presentation
-+ Data (content, format)
-+ Sourcing (source, frequency, volume)
-+ Storage (MongoDB, CouchDB)
-
-**2. Qualitative Analysis**
-
-+ Coherence model
-+ Concurrency
-+ Data types
-+ Fault tolerance
-+ Availability
-+ Scalability
-+ Interface
-+ Database setup
-+ Integration with external systems
-
-**3. Quantitative analysis**
-
-+ Runtime performance comparison for query, update, delete, insert operations
-+ Scalability performance comparison
-
-**4. Conclusion**
-
-+ Summary
-+ Opinions
-
-**5. Annexes**
-
-+ Scripts
-+ README
+1. Creer un compte Twitter ou utiliser un compte existant
+2. Enregistrer une [nouvelle application Twitter](https://apps.twitter.com/)
+3. Enregistrer les tokens d'authentification dans un nouveau fichier:
+4. `~/projet_BDA/source/credentials.py`
+```
+app_key = 'uwU6y41VPVsZipwqXa3YMT1PC'
+app_secret = 'OeVCgEhGJJs4dcHCsJF4bFkjBHu2mWtkuwdw242242gCsUFZA73PRm3'
+```
+_adapter les valeurs en fonction des tokens d'authentification recu en (2)_
+5. Executer la recherche de tweets:
+```
+python3 ~/projet_BDA/source/search.py {keyword} {save_dir}
+```
+La valeur de `keyword` determine le mot clef utilise dans la recherche de tweets. La valeur de `savedir` determine le chemin du dossier ou sont enregistres les `.json` tweets.
 
 
-# Execution
+## Bases de donnees (sur Ubuntu 17.10)
 
-+ Presentation of the application
-+ Data (content, format)
-+ Sourcing (source, frequency, volume)
-+ Storage (MongoDB, CouchDB)
+Installer les bases de donnees
+```
+sudo bash ~/projet_BDA/mymongodb/setup.sh;
+sudo bash ~/projet_BDA/mycouchdb/setup_couchdb.sh;
+```
 
-## Application overview
-
-The application we are building is a topic discovery platform using Twitter data.
-
-Marketing departments are typically interested in getting insights about what people discuss on social media. Such insights can be delivered in a SaaS platform that the analysts of client businesses can use to explore topics our application has discovered for a specific tweet dataset.
-
-Tweets datasets are collections of tweets.
-We can imagine multiple ways to make a topic extraction feature relevant to businesses.  
-For example, we may want to study datasets of tweets for a given group of users (ie a specific demographic). Alternatively, we could be interested in building a dataset of tweets that contain a specific keyword to discover which topics that are often mentionned in the same tweets as the specified keyword.
-
-To create these tweet datasets, we need the ability to store and query tweets based on their various attributes (cf next section about data).
-
-Social media data is constantly generated and we want our application to reflect conversation trends as current as possible. However, we can still afford to load new tweets in batches on a use case basis. For example, if Coca-Cola wants to know the topics associated with its brands in tweets, we will load Coca-Cola related tweets just one time.
-
-Finally, because we envision the application to be a SaaS platform, we need a database that supports concurrent access to the database.
+Demarrer les bases de donnees
+```
+sudo bash ~/projet_BDA/mymongodb/start_mongodb.sh;
+sudo bash ~/projet_BDA/mymongodb/start_couchdb.sh;
+```
 
 
-## Data overview
+## Runtime testing (main)
 
-### Content
+Executer le programmme de test des bases de donnees:
+```
+python3 ~/projet_BDA/main.py {save_dir}
+```
+La valeur de `savedir` doit indiquer le chemin du dossier ou sont enregistres les `.json` tweets.
 
-Our application primarily uses [tweet objects](https://developer.twitter.com/en/docs/tweets/data-dictionary/overview/tweet-object).
-
-According to Twitter documentation, _"Tweets are the basic atomic building block of all things Twitter. Tweets are also known as “status updates.” The Tweet object has a long list of ‘root-level’ attributes, including fundamental attributes such as `id`, `created_at`, and `text`. Tweet objects are also the ‘parent’ object to several child objects. Tweet child objects include `user`, `entities`, and `extended_entities`. Tweets that are geo-tagged will have a `place` child object."_
-
-
-### Format
-
-Tweets are natively [JSON](http://json.org/) formatted. Below is preview of the top level atributes for the tweet object.
+## Sample output
 
 ```
 {
- "created_at":"Thu Apr 06 15:24:15 +0000 2017",
- "id": 850006245121695744,
- "id_str": "850006245121695744",
- "text": "1/ Today we’re sharing our vision for the future of the Twitter API platform!nhttps://t.co/XweGngmxlP",
- "user": {},  
- "entities": {}
+  "mongodb": {
+    "create": {
+      "10000": 1.3170632674999978,
+      "20000": 2.4028837405000103,
+      "50000": 6.275010825599997,
+      "70000": 8.1673237211,
+      "90000": 10.737976402799973
+    },
+    "retrieve": {
+      "10000": 0.3924127672000054,
+      "20000": 0.8381911315000365,
+      "50000": 1.9734007373999929,
+      "70000": 2.2166742306000744,
+      "90000": 2.845205988800012
+    },
+    "update": {
+      "10000": 0.2292069305999803,
+      "20000": 0.46248832390000416,
+      "50000": 1.029549795300022,
+      "70000": 1.5355352308999728,
+      "90000": 1.8713928380999505
+    },
+    "delete": {
+      "10000": 0.05750133139998752,
+      "20000": 0.08569198170000618,
+      "50000": 0.24955861039999264,
+      "70000": 0.27640671549993384,
+      "90000": 0.3410740344999567
+    }
+  },
+  "couchdb": {
+    "create": {
+      "10000": 4.750772356599964,
+      "20000": 12.67306841479999,
+      "50000": 34.717924828499875,
+      "70000": 48.68356543790014,
+      "90000": 75.54986584200014
+    },
+    "create_view": {
+      "10000": 0.005271056199944724,
+      "20000": 0.058147187799977476,
+      "50000": 0.03402844499987623,
+      "70000": 0.009186377000150969,
+      "90000": 0.0074849033002465145
+    },
+    "query": {
+      "10000": 6.478856433300029,
+      "20000": 18.67054554720007,
+      "50000": 48.31748290260002,
+      "70000": 63.49018442459992,
+      "90000": 79.32879154790007
+    },
+    "update": {
+      "10000": 3.0128769274999287,
+      "20000": 10.14986742908467,
+      "50000": 20.1237516582999,
+      "70000": 28.0551049425002,
+      "90000": 34.78665568159977
+    },
+    "delete": {
+      "10000": 5.628491597099969,
+      "20000": 19.348930056100016,
+      "50000": 37.8313908247002,
+      "70000": 568.4546992089998,
+      "90000": 75.23109177970018
+    }
+  }
 }
-```
-
-The full data dictionary for tweet objects is available in the [official documentation for tweets](https://developer.twitter.com/en/docs/tweets/data-dictionary/overview/tweet-object); please refer to this for more information.
-
-## Sourcing overview
-
-### Source
-
-We will be using the Twitter REST API for fetching the tweets that are relevant to our use cases.
-
-The endpoints: 
-
-+ [`GET search/tweets`](https://developer.twitter.com/en/docs/tweets/search/api-reference/get-search-tweets.html) is used for fetching tweets based on keywords
-+ [`GET statuses / home_timeline`](https://developer.twitter.com/en/docs/tweets/timelines/overview) is used for sourcing tweets for a given user of interest.
-
-Please find the data sourcing scripts in the annexe.	
-
-### Frequency
-
-We update the tweet database on a per use case basis. This means that everytime a client as a specific request we need to fetch the tweets related to the request using the appropriate API endpoint and then load the tweets in the document database.
-
-### Volume
-
-We typically expect to be working on datasets in the order of up to 1 to 10 millions tweets per use case.
-
-For example; if a client is interested to discover topics across a sample set of 50,000 we would be retrieving the 50 most recent tweets for each user thus getting us ~2,5 millions tweets.
-
-The size of a JSON tweet object is typically in the order of 2.5KB; therefore for each new use case a client brings, we would have to store an additional 2.5 to 25 GB in our database.
-
-
-## Candidate databases: MongoDB and CouchDB
-
-To be continued...
-
-# Qualitative Analysis
-
-The qualitative analysis studies the following aspects for each system:
-
-+ Coherence model
-+ Concurrency
-+ Data types
-+ Fault tolerance
-+ Availability
-+ Scalability
-+ Interface
-+ Database setup
-+ Integration with external systems
-
-## Coherence model
-### MongoDB
-### CouchDB
-## Concurrency
-### MongoDB
-### CouchDB
-## Data types
-### MongoDB
-### CouchDB
-## Fault tolerance
-### MongoDB
-### CouchDB
-## Availability
-### MongoDB
-### CouchDB
-## Scalability
-### MongoDB
-### CouchDB
-## Interface
-### MongoDB
-### CouchDB
-## Database setup
-### MongoDB
-### CouchDB
-## Integration with external systems
-### MongoDB
-### CouchDB
-## Conclusion: quantitative comparison
-
-# Quantitative analysis
-
-The quantitative analysis studies the following aspects for each system:
-
-+ Runtime performance analysis
-+ Scalability performance analysis
-
-## Runtime performance comparison
-
-### Query
-#### MongoDB
-#### CouchDB
-### Update
-#### MongoDB
-#### CouchDB
-### Insert
-#### MongoDB
-#### CouchDB
-### Delete
-#### MongoDB
-#### CouchDB
-
-### Conclusion: runtime performance comparison 
-
-
-## Scalability performance comparison
-### MongoDB scalability performance analysis
-### CouchDB scalability performance analysis
-### Conclusion: Scalability performance comparison 
