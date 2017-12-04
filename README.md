@@ -9,7 +9,7 @@ Clone / download le repertoire
 git clone ~/projet_BDA https://github.com/eolecvk/documentDB_analysis.git
 ```
 
-Installer les dépendance listée dans `requirements.txt`:
+Installer les dépendances listées dans `requirements.txt`:
 ```
 pip install -r ~/projet_BDA/requirements.txt
 ```
@@ -24,12 +24,14 @@ pip install -r ~/projet_BDA/requirements.txt
 app_key = 'uwU6y41VPVsZipwqXa3YMT1PC'
 app_secret = 'OeVCgEhGJJs4dcHCsJF4bFkjBHu2mWtkuwdw242242gCsUFZA73PRm3'
 ```
-_adapter les valeurs en fonction des tokens d'authentification recu en (2)_
+_Les valeurs sont a adapter en fonction des tokens d'authentification recus en (2)_
+
 5. Executer la recherche de tweets:
 ```
 python3 ~/projet_BDA/source/search.py {keyword} {save_dir}
 ```
-La valeur de `keyword` determine le mot clef utilise dans la recherche de tweets. La valeur de `savedir` determine le chemin du dossier ou sont enregistres les `.json` tweets.
+La valeur de `keyword` determine le mot clef utilise dans la recherche de tweets.  
+La valeur de `savedir` determine le chemin du dossier ou sont enregistres les `.json` tweets.
 
 
 ## Bases de donnees (sur Ubuntu 17.10)
