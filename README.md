@@ -1,4 +1,4 @@
-# README
+﻿# README
 
 ## Environnement
 
@@ -18,8 +18,7 @@ pip install -r ~/projet_BDA/requirements.txt
 
 1. Creer un compte Twitter ou utiliser un compte existant
 2. Enregistrer une [nouvelle application Twitter](https://apps.twitter.com/)
-3. Enregistrer les tokens d'authentification dans un nouveau fichier:
-4. `~/projet_BDA/source/credentials.py`
+3. Enregistrer les tokens d'authentification dans un nouveau fichier `~/projet_BDA/source/credentials.py`:
 ```
 app_key = 'uwU6y41VPVsZipwqXa3YMT1PC'
 app_secret = 'OeVCgEhGJJs4dcHCsJF4bFkjBHu2mWtkuwdw242242gCsUFZA73PRm3'
